@@ -32,22 +32,17 @@ export default async function RootLayout({
   } = await supabase.auth.getUser();
 
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body>
-        <nav className="w-screen flex justify-between items-center px-2 md:px-5 py-4 bg-blue-400">
-          <p className="text-white text-sm md:text-base">
-            Hi {user ? user.email : "Bapak/Ibu Guru"}
-          </p>
-          <div className="flex gap-2">
-            <ModeToggle />
-            <Button className="rounded-md bg-red-500 text-white">Logout</Button>
-          </div>
-        </nav>
-        {children}
-      </body>
-    </html>
+    <main>
+      <nav className="w-screen flex justify-between items-center px-2 md:px-5 py-4 bg-mainColor">
+        <p className="text-white text-sm md:text-base">
+          Hi {user ? user.email : "Bapak/Ibu Guru"}
+        </p>
+        <div className="flex gap-2">
+          <ModeToggle />
+          <Button className="rounded-md bg-red-500 text-white">Logout</Button>
+        </div>
+      </nav>
+      {children}
+    </main>
   );
 }

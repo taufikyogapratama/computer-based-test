@@ -1,10 +1,11 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { signInWithEmail } from "./signInAction";
 
 import { Button } from "@/components/ui/button";
 import {
   Field,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldLegend,
@@ -21,6 +22,8 @@ type props = {
 const SignIn = (props: props) => {
   const email = useRef<HTMLInputElement>(null);
   const password = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState(false);
+  const [msgErr, setMsgErr] = useState("");
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const valEmail = email.current?.value as string;
@@ -29,7 +32,8 @@ const SignIn = (props: props) => {
     if (result.message === "success") {
       redirect("admin/dashboard");
     } else {
-      alert(result.message);
+      setMsgErr(result.message);
+      setError(true);
     }
   };
 
@@ -65,13 +69,13 @@ const SignIn = (props: props) => {
                 className="border rounded px-1"
               />
             </Field>
+            {error ? <FieldError>{msgErr}</FieldError> : false}
             <Field orientation="horizontal" className="flex justify-between">
               <Button type="submit" className="rounded-md">
                 Login
               </Button>
               <Button
                 variant="outline"
-                type="submit"
                 onClick={() => props.changeUser(!props.user)}
                 className="rounded-md"
               >
