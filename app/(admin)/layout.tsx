@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-import { ModeToggle } from "@/components/modeToggle";
 import { createClient } from "@/lib/supabase/server";
-import { Button } from "@/components/ui/button";
+import { redirect } from "next/navigation";
+import Navbar from "./Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,18 +31,39 @@ export default async function RootLayout({
     error,
   } = await supabase.auth.getUser();
 
+  if (error) {
+    redirect("/");
+  }
+
+  const getNameGuru = async (id: string) => {
+    const { data, error } = await supabase
+      .from("Guru")
+      .select("nama")
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      return;
+    }
+
+    return data?.nama;
+  };
+
+  const namaGuru = await getNameGuru(user?.id || "");
+
+  async function signOut() {
+    "use server";
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signOut();
+    console.log(error);
+  }
+
   return (
-    <main>
-      <nav className="w-screen flex justify-between items-center px-2 md:px-5 py-4 bg-mainColor">
-        <p className="text-white text-sm md:text-base">
-          Hi {user ? user.email : "Bapak/Ibu Guru"}
-        </p>
-        <div className="flex gap-2">
-          <ModeToggle />
-          <Button className="rounded-md bg-red-500 text-white">Logout</Button>
-        </div>
-      </nav>
+    <div>
+      <header>
+        <Navbar nameGuru={namaGuru} signOut={signOut} />
+      </header>
       {children}
-    </main>
+    </div>
   );
 }

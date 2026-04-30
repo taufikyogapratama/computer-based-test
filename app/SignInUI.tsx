@@ -30,7 +30,7 @@ const SignIn = (props: props) => {
     const valPassword = password.current?.value as string;
     const result = await signInWithEmail(valEmail, valPassword);
     if (result.message === "success") {
-      redirect("admin/dashboard");
+      redirect("/dashboard");
     } else {
       setMsgErr(result.message);
       setError(true);
@@ -42,7 +42,7 @@ const SignIn = (props: props) => {
       <div className="absolute top-3 right-4">
         <ModeToggle />
       </div>
-      <main>
+      <section>
         <form onSubmit={handleSubmit}>
           <FieldGroup className="w-80">
             <FieldLegend className="text-center">
@@ -84,7 +84,7 @@ const SignIn = (props: props) => {
             </Field>
           </FieldGroup>
         </form>
-      </main>
+      </section>
     </div>
   );
 };

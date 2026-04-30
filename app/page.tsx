@@ -9,13 +9,13 @@ const App = () => {
     setUser(newValue);
   };
   return (
-    <>
+    <main>
       {user ? (
         <UjianUi user={user} changeUser={changeUser} />
       ) : (
         <SignInUI user={user} changeUser={changeUser} />
       )}
-    </>
+    </main>
   );
 };
 

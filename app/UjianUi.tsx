@@ -54,7 +54,7 @@ const UjianUi = (props: props) => {
       <div className="absolute top-3 right-4">
         <ModeToggle />
       </div>
-      <main>
+      <section>
         <form onSubmit={handleSubmit}>
           <FieldGroup className="w-80">
             <FieldLegend className="text-center">Mengerjakan Ujian</FieldLegend>
@@ -127,7 +127,7 @@ const UjianUi = (props: props) => {
             </Field>
           </FieldGroup>
         </form>
-      </main>
+      </section>
     </div>
   );
 };
