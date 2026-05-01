@@ -1,4 +1,3 @@
-// actions/ujianAction.ts
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
@@ -64,8 +63,8 @@ export const BuatUjianAction = async (
   ]);
 
   if (error) {
-    return { message: error };
+    return { message: error, kodeUjian: null };
   } else {
-    return { message: "Success" };
+    return { message: "Success", kodeUjian: kodeUjian };
   }
 };

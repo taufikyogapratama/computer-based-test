@@ -31,7 +31,7 @@ const BuatUjian = () => {
     );
 
     if (result?.message === "Success") {
-      redirect("/dashboard");
+      redirect(`/ujian/edit/${result.kodeUjian}`);
     } else if (result.message === "waktu selesai ujian terjadi sebelum mulai") {
       setError(true);
     } else {

@@ -34,6 +34,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { redirect } from "next/navigation";
 
 type dataType = {
   id: string;
@@ -69,6 +70,10 @@ const Dashboard = () => {
     setDataUjian((prevData) =>
       prevData.filter((ujian) => ujian.id !== id_ujian),
     );
+  };
+
+  const handleEdit = (kode: string) => {
+    redirect(`ujian/edit/${kode}`);
   };
 
   return (
@@ -136,7 +141,9 @@ const Dashboard = () => {
                         <Copy className="mr-2 h-4 w-4" />
                         Buat ujian baru dengan soal ini
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleEdit(ujian.kode_ujian)}
+                      >
                         <SquarePen className="mr-2 h-4 w-4" />
                         Edit
                       </DropdownMenuItem>
