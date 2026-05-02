@@ -76,6 +76,10 @@ const Dashboard = () => {
     redirect(`ujian/edit/${kode}`);
   };
 
+  const handleCopy = (kode: string) => {
+    redirect(`ujian/copy-ujian/${kode}`);
+  };
+
   return (
     <main className="px-4 mt-4">
       <div className="text-xl mb-3 px-2 flex justify-between items-center">
@@ -137,7 +141,9 @@ const Dashboard = () => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleCopy(ujian.kode_ujian)}
+                      >
                         <Copy className="mr-2 h-4 w-4" />
                         Buat ujian baru dengan soal ini
                       </DropdownMenuItem>
