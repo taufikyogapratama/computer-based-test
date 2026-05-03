@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import * as XLSX from "xlsx";
 
 export const GetUjian = async () => {
   const supabase = await createClient();
@@ -15,7 +16,6 @@ export const GetUjian = async () => {
     redirect("/");
   }
 
-  // Tambahkan 'id' ke dalam select untuk dijadikan unique key di React
   const { data: daftarUjian, error } = await supabase
     .from("Ujian")
     .select("id, judul, kode_ujian, waktu_mulai, waktu_selesai")
@@ -51,4 +51,42 @@ export const DeleteUjian = async (id_ujian: string) => {
     return { message: error.message };
   }
   return { message: "success" };
+};
+
+export const getRekapNilai = async (idUjian: number) => {
+  const supabase = await createClient();
+
+  const { data: authData } = await supabase.auth.getUser();
+  const userId = authData.user?.id;
+
+  const { data: ujian } = await supabase
+    .from("Ujian")
+    .select("judul, guru_id")
+    .eq("id", idUjian)
+    .single();
+
+  if (!ujian || ujian.guru_id !== userId) {
+    return {
+      success: false,
+      message: "Akses Ditolak!",
+      data: null,
+      judul: null,
+    };
+  }
+
+  const { data: sesiMurid, error } = await supabase
+    .from("Sesi_Murid")
+    .select("nis, nama_murid, kelas, waktu_mulai, waktu_kumpul, nilai_akhir")
+    .eq("ujian_id", idUjian)
+    .order("kelas", { ascending: true })
+    .order("nama_murid", { ascending: true });
+
+  if (error)
+    return { success: false, message: error.message, data: null, judul: null };
+
+  return {
+    success: true,
+    data: sesiMurid,
+    judul: ujian.judul,
+  };
 };

@@ -22,7 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
-import { GetUjian, DeleteUjian } from "./DataUjianAction";
+import { GetUjian, DeleteUjian, getRekapNilai } from "./DataUjianAction";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,7 +34,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { redirect } from "next/navigation";
 
 type dataType = {
   id: string;
@@ -44,7 +43,12 @@ type dataType = {
   waktu_selesai: string;
 };
 
+// import { unduhExcelRekap } from "./DataUjianAction";
+import { useRouter } from "next/navigation";
+import * as XLSX from "xlsx";
+
 const Dashboard = () => {
+  const router = useRouter();
   const [dataUjian, setDataUjian] = useState<dataType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
@@ -73,11 +77,50 @@ const Dashboard = () => {
   };
 
   const handleEdit = (kode: string) => {
-    redirect(`ujian/edit/${kode}`);
+    router.push(`ujian/edit/${kode}`);
   };
 
   const handleCopy = (kode: string) => {
-    redirect(`ujian/copy-ujian/${kode}`);
+    router.push(`ujian/copy-ujian/${kode}`);
+  };
+
+  const handleDownload = async (id: string) => {
+    try {
+      const res = await getRekapNilai(Number(id));
+
+      if (!res.success || !res.data) {
+        alert(`Gagal mengunduh data: ${res.message}`);
+        return;
+      }
+
+      if (res.data.length === 0) {
+        alert("Belum ada murid yang mengerjakan ujian ini.");
+        return;
+      }
+
+      const formattedData = res.data.map((row: any) => ({
+        NIS: row.nis,
+        "Nama Lengkap": row.nama_murid,
+        Kelas: row.kelas,
+        "Waktu Mulai": row.waktu_mulai
+          ? new Date(row.waktu_mulai).toLocaleString("id-ID")
+          : "-",
+        "Waktu Selesai": row.waktu_kumpul
+          ? new Date(row.waktu_kumpul).toLocaleString("id-ID")
+          : "Belum Selesai",
+        "Nilai Akhir": row.nilai_akhir !== null ? row.nilai_akhir : "Belum Ada",
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(formattedData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Rekap Nilai");
+
+      const namaFile = `Rekap_${res.judul || "Ujian"}.xlsx`;
+      XLSX.writeFile(workbook, namaFile);
+    } catch (error) {
+      console.error("Error download Excel:", error);
+      alert("Terjadi kesalahan saat mengunduh data.");
+    }
   };
 
   return (
@@ -85,7 +128,6 @@ const Dashboard = () => {
       <div className="text-xl mb-3 px-2 flex justify-between items-center">
         <h1 className="font-bold">Daftar Ujian</h1>
         <Button
-          asChild
           variant="default"
           className="bg-green-500 rounded-md text-white hover:bg-green-600"
         >
@@ -153,7 +195,9 @@ const Dashboard = () => {
                         <SquarePen className="mr-2 h-4 w-4" />
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleDownload(ujian.id)}
+                      >
                         <Download className="mr-2 h-4 w-4" />
                         Download rekap nilai
                       </DropdownMenuItem>
