@@ -19,8 +19,16 @@ export const loginUjian = async (
     return { success: false, message: "Kode ujian tidak ditemukan!" };
 
   const waktuSekarang = new Date().getTime();
-  const waktuMulai = new Date(ujian.waktu_mulai).getTime();
-  const waktuSelesai = new Date(ujian.waktu_selesai).getTime();
+  const parseWaktuWIB = (waktuStr: string) => {
+    let formatAman = waktuStr.replace(" ", "T");
+
+    formatAman = formatAman.replace("Z", "") + "+07:00";
+
+    return new Date(formatAman).getTime();
+  };
+
+  const waktuMulai = parseWaktuWIB(ujian.waktu_mulai);
+  const waktuSelesai = parseWaktuWIB(ujian.waktu_selesai);
 
   if (waktuSekarang < waktuMulai)
     return { success: false, message: "Ujian belum dimulai!" };
