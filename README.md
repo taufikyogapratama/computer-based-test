@@ -1,3 +1,28 @@
+# Aplikasi Computer Based Test (CBT)
+
+Aplikasi ini adalah platform ujian berbasis komputer (CBT) interaktif yang memfasilitasi pembuatan soal dan proses evaluasi nilai antara guru dan murid secara _real-time_.
+
+🌐 **Live Demo:** https://computer-based-test-lilac.vercel.app/
+
+## 🛠️ Cara Kerja Sistem
+
+Aplikasi ini memiliki dua alur utama yang saling terhubung:
+
+1. **Alur Guru (Teacher Dashboard)**
+   Guru masuk ke dalam sistem menggunakan akun yang sudah terdaftar. Melalui _dashboard_, guru dapat membuat ujian baru, mengatur waktu, dan memasukkan butir-butir soal. Setelah ujian berhasil dibuat, sistem akan secara otomatis menghasilkan sebuah **Kode Ujian** yang unik.
+
+2. **Alur Murid (Student Portal)**
+   Murid tidak perlu repot membuat akun. Murid cukup membuka halaman utama aplikasi, lalu memasukkan data diri (Nama, NIS, Kelas) beserta **Kode Ujian** yang telah diberikan oleh guru. Setelah itu, murid dapat langsung masuk ke halaman pengerjaan soal.
+
+## 🔑 Akun Percobaan (Demo Account)
+
+Jika Anda ingin meninjau fitur-fitur di dalam _dashboard_ guru (seperti membuat ujian, melihat soal, atau mengunduh rekap nilai), Anda dapat menggunakan akun percobaan berikut:
+
+- **Email:** `guruteladan@gmail.com`
+- **Password:** `guruteladan123`
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
