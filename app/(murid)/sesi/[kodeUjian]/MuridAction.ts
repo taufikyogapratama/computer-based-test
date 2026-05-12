@@ -119,31 +119,26 @@ export const simpanJawabanKeDb = async (
   }
 };
 
-// export const akhiriSesiDb = async (sesiId: number) => {
-//   const supabase = await createClient();
-//   await supabase
-//     .from("Sesi_Murid")
-//     .update({ waktu_kumpul: new Date().toISOString() })
-//     .eq("id", sesiId);
-//   return { success: true };
-// };
-
 export const akhiriSesiDb = async (sesiId: number) => {
   const supabase = await createClient();
 
+  // Ambil ujian_id dari sesi saat ini
   const { data: sesi } = await supabase
     .from("Sesi_Murid")
     .select("ujian_id")
     .eq("id", sesiId)
     .single();
 
+  // Kalau sesi ini tidak ada
   if (!sesi) return { success: false, message: "Sesi tidak ditemukan" };
 
+  // Ambil id dan kunci jawaban dari soal soal yang ber ujian_id saat ini
   const { data: daftarSoal } = await supabase
     .from("Soal")
     .select("id, kunci_jawaban")
     .eq("ujian_id", sesi.ujian_id);
 
+  // Ambil soal_id dan jawaban_dipilih dari tabel Jawaban Murod yang sesi id
   const { data: jawabanMurid } = await supabase
     .from("Jawaban_Murid")
     .select("soal_id, jawaban_dipilih")
@@ -154,13 +149,16 @@ export const akhiriSesiDb = async (sesiId: number) => {
 
   if (totalSoal > 0 && jawabanMurid) {
     const mapJawaban = new Map(
-      jawabanMurid.map((j) => [j.soal_id, j.jawaban_dipilih]),
+      jawabanMurid.map((j) => {
+        return [j.soal_id, j.jawaban_dipilih];
+      }),
     );
 
     daftarSoal?.forEach((soal) => {
       const jawabanUser = mapJawaban.get(soal.id);
 
-      if (jawabanUser && jawabanUser === soal.kunci_jawaban) {
+      // if (jawabanUser && jawabanUser === soal.kunci_jawaban) {
+      if (jawabanUser === soal.kunci_jawaban) {
         jumlahBenar++;
       }
     });
@@ -169,7 +167,6 @@ export const akhiriSesiDb = async (sesiId: number) => {
   const nilaiAkhir = totalSoal > 0 ? (jumlahBenar / totalSoal) * 100 : 0;
 
   const nilaiBulat = parseFloat(nilaiAkhir.toFixed(2));
-
   const { error } = await supabase
     .from("Sesi_Murid")
     .update({
