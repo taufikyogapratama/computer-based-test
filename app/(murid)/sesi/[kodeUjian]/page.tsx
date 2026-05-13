@@ -5,8 +5,23 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useUjian } from "./UjianContext";
+import { useRouter } from "next/navigation";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
 
 const HalamanJawab = () => {
+  const router = useRouter();
+  const [statusSelesai, setStatusSelesai] = useState(false);
   const {
     soal,
     currentIndex,
@@ -25,13 +40,13 @@ const HalamanJawab = () => {
   const isTerakhir = currentIndex === soal.length - 1;
 
   const konfirmasiSelesai = () => {
-    if (
-      confirm(
-        "Apakah Anda yakin ingin menyelesaikan ujian? Jawaban tidak bisa diubah lagi.",
-      )
-    ) {
-      selesaikanUjian();
-    }
+    selesaikanUjian();
+    setStatusSelesai(true);
+  };
+
+  const handleSelesai = () => {
+    setStatusSelesai(false);
+    router.push("/");
   };
 
   return (
@@ -95,12 +110,52 @@ const HalamanJawab = () => {
             </Button>
           </ButtonGroup>
 
-          <Button
-            className="bg-green-600 hover:bg-green-700 text-white rounded-md text-base px-8"
-            onClick={konfirmasiSelesai}
-          >
-            Selesai
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className="bg-green-600 hover:bg-green-700 text-white rounded-md text-base px-8">
+                Selesai
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Apakah anda yakin?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Apakah Anda yakin ingin menyelesaikan ujian? Jawaban tidak
+                  bisa diubah lagi.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="rounded-md">
+                  Batal
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={konfirmasiSelesai}
+                  className="rounded-md"
+                >
+                  Selesai
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <AlertDialog open={statusSelesai}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Ujian Selesai</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Jawaban Anda telah direkam.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction
+                  onClick={handleSelesai}
+                  className="rounded-md"
+                >
+                  Ok
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>

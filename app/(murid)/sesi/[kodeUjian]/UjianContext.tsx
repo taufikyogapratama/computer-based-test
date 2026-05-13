@@ -1,4 +1,4 @@
-"use client";
+// "use server";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getDataCbt, simpanJawabanKeDb, akhiriSesiDb } from "./MuridAction";
 import { useRouter } from "next/navigation";
@@ -103,8 +103,6 @@ export const UjianProvider = ({
       await akhiriSesiDb(sesiId);
       localStorage.removeItem(`sesi_ujian_${kodeUjian}`);
       localStorage.removeItem(`ragu_${sesiId}`);
-      alert("Ujian Selesai! Jawaban Anda telah direkam.");
-      router.push("/");
     }
   };
 

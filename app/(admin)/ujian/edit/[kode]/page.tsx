@@ -32,6 +32,17 @@ import {
 } from "@/components/ui/dialog";
 
 import { useParams } from "next/navigation";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const emptySoal = {
   teks_soal: "",
@@ -120,8 +131,8 @@ const EditUjian = () => {
 
   const handleHapus = async () => {
     if (!formData.id) return;
-    const yakin = window.confirm("Apakah Anda yakin ingin menghapus soal ini?");
-    if (!yakin) return;
+    // const yakin = window.confirm("Apakah Anda yakin ingin menghapus soal ini?");
+    // if (!yakin) return;
 
     setIsSaving(true);
     const res = await hapusSoal(formData.id);
@@ -370,16 +381,32 @@ const EditUjian = () => {
 
               <div className="flex gap-3">
                 {!isCreating && formData.id && (
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={handleHapus}
-                    disabled={isSaving}
-                    className="rounded-md"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Hapus
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button className="rounded-md bg-red-500 text-white">
+                        Hapus
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent size="sm">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Soal yang telah dihapus tidak bisa dipulihkan
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel variant="outline">
+                          Batal
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          variant="destructive"
+                          onClick={handleHapus}
+                        >
+                          Hapus
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 )}
 
                 {showSimpanButton && (

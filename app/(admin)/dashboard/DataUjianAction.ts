@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import * as XLSX from "xlsx";
+import { TableCell } from "@/components/ui/table";
 
 export const GetUjian = async () => {
   const supabase = await createClient();
@@ -26,8 +26,23 @@ export const GetUjian = async () => {
     console.error("Gagal mengambil data ujian:", error.message);
     return [];
   }
+  if (!daftarUjian) return [];
 
-  return daftarUjian || [];
+  const ujianDenganJumlah = await Promise.all(
+    daftarUjian.map(async (ujian) => {
+      const { count } = await supabase
+        .from("Sesi_Murid")
+        .select("*", { count: "exact", head: true })
+        .eq("ujian_id", ujian.id);
+
+      return {
+        ...ujian,
+        jumlah_pengumpul: count || 0,
+      };
+    }),
+  );
+
+  return ujianDenganJumlah;
 };
 
 export const DeleteUjian = async (id_ujian: string) => {
